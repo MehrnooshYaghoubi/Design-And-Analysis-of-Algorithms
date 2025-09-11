@@ -1,0 +1,4 @@
+.drag-region {
+  flex: 1;
+  -webkit-app-region: drag;
+}

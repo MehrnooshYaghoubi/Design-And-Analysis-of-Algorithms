@@ -1,0 +1,24 @@
+{
+    "heap sort": "{\n\"type\": \"i32\",\n\"arr\": [10,5,6,7,4]\n}",
+    "bubble sort": "{\n\"type\": \"i32\",\n\"arr\": [10,5,6,7,4]\n}",
+    "merge sort": "{\n\"type\": \"i32\",\n\"arr\": [10,5,6,7,4]\n}",
+    "radix sort": "{\n\"type\": \"i32\",\n\"arr\": [10,5,6,7,4]\n}",
+    "quick sort 3 partition": "{\n\"type\": \"i32\",\n\"arr\": [10,5,6,7,4]\n}",
+    "selection sort": "{\n\"type\": \"i32\",\n\"arr\": [10,5,6,7,4]\n}",
+    "merge sort fastest": "{\n\"type\": \"i32\",\n\"arr\": [10,5,6,7,4]\n}",
+    "quick sort": "{\n\"type\": \"i32\",\n\"arr\": [10,5,6,7,4]\n}",
+    "bucket sort": "{\n\"type\": \"i32\",\n\"arr\": [10,5,6,7,4]\n}",
+    "insertion sort": "{\n\"type\": \"i32\",\n\"arr\": [10,5,6,7,4]\n}",
+    "activity selection": "[{\"start\": 1, \"finish\": 3}, {\"start\": 2, \"finish\": 5}, {\"start\": 4, \"finish\": 6}]",
+    "fractional knapsack": "{\n    \"capacity\": 50.0,\n    \"items\": [\n        { \"value\": 60.0, \"weight\": 10.0 },\n        { \"value\": 100.0, \"weight\": 20.0 },\n        { \"value\": 120.0, \"weight\": 30.0 }\n    ]\n}",
+    "huffman coding": "{\"a\": 5, \"b\": 9, \"c\": 12, \"d\": 13, \"e\": 16, \"f\": 45}",
+    "kruskals algorithm": "{\"num_vertices\": 4, \"edges\": [{\"src\": 0, \"dest\": 1, \"weight\": 10}, {\"src\": 0, \"dest\": 2, \"weight\": 6}, {\"src\": 0, \"dest\": 3, \"weight\": 5}, {\"src\": 1, \"dest\": 3, \"weight\": 15}, {\"src\": 2, \"dest\": 3, \"weight\": 4}]}",
+    "prims algorithm": "{\"num_vertices\": 5, \"edges\": [{\"src\": 0, \"dest\": 1, \"weight\": 2}, {\"src\": 0, \"dest\": 3, \"weight\": 6}, {\"src\": 1, \"dest\": 2, \"weight\": 3}, {\"src\": 1, \"dest\": 3, \"weight\": 8}, {\"src\": 1, \"dest\": 4, \"weight\": 5}, {\"src\": 2, \"dest\": 4, \"weight\": 7}, {\"src\": 3, \"dest\": 4, \"weight\": 9}]}",
+    "bellman ford": "{\"vertex_count\": 5, \"start\": 0, \"edges\": [{\"from\": 0, \"to\": 1, \"weight\": 6}, {\"from\": 0, \"to\": 2, \"weight\": 7}, {\"from\": 1, \"to\": 2, \"weight\": 8}, {\"from\": 1, \"to\": 3, \"weight\": 5}, {\"from\": 1, \"to\": 4, \"weight\": -4}, {\"from\": 2, \"to\": 3, \"weight\": -3}]}",
+    "breadth first search": "{\"graph\": [[1, 2], [0, 3], [0], [1]], \"start\": 0}",
+    "depth first search": "{\"graph\": [[1, 2], [0, 3], [0], [1]], \"start\": 0}",
+    "dijkstras algorithm": "{\"adj_list\": [[{\"node\": 1, \"cost\": 4}, {\"node\": 2, \"cost\": 1}], [{\"node\": 3, \"cost\": 1}], [{\"node\": 1, \"cost\": 2}, {\"node\": 3, \"cost\": 5}], []], \"start\": 0}",
+    "binary search": "{\"type\": \"i32\",\n\"arr\": [1, 3, 5, 7, 9], \"target\": 7}",
+    "closest pair of points": "{\"points\": [{\"x\": 2.0, \"y\": 3.0}, {\"x\": 12.0, \"y\": 30.0}, {\"x\": 40.0, \"y\": 50.0}, {\"x\": 5.0, \"y\": 1.0}, {\"x\": 12.0, \"y\": 10.0}, {\"x\": 3.0, \"y\": 4.0}]}"
+
+}

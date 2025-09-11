@@ -1,0 +1,46 @@
+{
+    "sorting_algotithms": [
+        "heap_sort.rs",
+        "bubble_sort.rs",
+        "merge_sort.rs",
+        "radix_sort.rs",
+        "quick_sort_3_partition.rs",
+        "selection_sort.rs",
+        "quick_sort.rs",
+        "bucket_sort.rs",
+        "insertion_sort.rs"
+    ],
+    "graph_algorithms": [
+        "depth_first_search.rs",
+        "dijkstras_algorithm.rs",
+        "breadth_first_search.rs",
+        "bellman_ford.rs"
+    ],
+    "divide_and_conquer": [
+        "merge_sort.rs",
+        "closest_pair_of_points.rs",
+        "binary_search.rs",
+        "quick_sort.rs"
+    ],
+    "backtracking": [
+        "sudoku_solver.rs",
+        "n_queens.rs",
+        "hamiltonian_cycle.rs",
+        "subset_sum.rs"
+    ],
+    "greedy_algorithms": [
+        "kruskals_algorithm.rs",
+        "fractional_knapsack.rs",
+        "huffman_coding.rs",
+        "prims_algorithm.rs",
+        "activity_selection.rs"
+    ],
+    "dynamic_programming": [
+        "longest_increasing_subsequence.rs",
+        "longest_common_subsequence.rs",
+        "floyd_warshall.rs",
+        "knapsack_01.rs",
+        "matrix_chain_multiplication.rs"
+    ],
+    "branch_and_bound": ["traveling_salesman.rs", "knapsack_optimization.rs"]
+}

@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Roboto";
+  src: url("fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url("fonts/Montserrat/Montserrat-VariableFont_wght.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  color: white;
+  background-color: black;
+  font-family: "Roboto", Courier, monospace;
+}
+.code-line {
+  transition: background-color 0.15s ease;
+}
+
+button {
+  transition: all 0.2s ease;
+}
+
+/* width of the scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px; /* for horizontal scrollbar */
+}
+
+/* track (background) */
+::-webkit-scrollbar-track {
+  background: #1e1e1e;
+  border-radius: 10px;
+}
+
+/* draggable part (thumb) */
+::-webkit-scrollbar-thumb {
+  background: #2c2c2c;
+  border-radius: 10px;
+}
+
+/* thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
