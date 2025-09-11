@@ -4,33 +4,61 @@
 
 ## Overview
 
-**KlugNet** is an interactive platform designed to help users visualize, understand, and experiment with a diverse collection of algorithms. Built with **Rust** and **Tauri**, KlugNet combines the performance of a robust backend with a user-friendly frontend to provide an educational and engaging experience.
-
-The project covers key algorithmic paradigms, including:
+**KlugNet** is an interactive platform built with **Rust** and **Tauri**, designed to showcase a diverse collection of algorithms from fundamental paradigms. This project provides an educational and engaging experience for visualizing, understanding, and experimenting with various algorithmic approaches, including:
 
 - Greedy Algorithms
 - Dynamic Programming
 - Backtracking
 - Branch and Bound
 - Divide and Conquer
-- And more!
+- Graph Algorithms
+- Sorting Algorithms
+
+---
 
 ## Features
 
 - **Extensive Algorithm Collection**  
-  Explore implementations of numerous algorithms across fundamental paradigms.
+  Explore implementations of numerous algorithms across key paradigms.
 
 - **Rust-Powered Backend**  
-  Leverages the performance and safety of Rust for efficient algorithm execution and data processing.
+  Leverages the performance and safety of Rust for robust algorithm execution and data processing.
 
 - **Interactive Frontend**  
-  Built with modern web technologies via Tauri, the interface allows for easy navigation, parameter input, and visualization of algorithm steps and results.
+  A user-friendly interface (built with web technologies via Tauri) allows for easy navigation, parameter input, and visualization of algorithm steps and results.
 
 - **Cross-Platform Compatibility**  
-  As a Tauri application, KlugNet runs seamlessly on Windows, macOS, and Linux.
+  As a Tauri application, KlugNet can be built for Windows, macOS, and Linux.
 
 - **Educational Tool**  
   Ideal for students, developers, and anyone interested in deepening their understanding of algorithms.
+
+---
+
+## Algorithms and Complexities
+
+| **Category**            | **Algorithm**                     | **Time Complexity**       | **Space Complexity**      |
+|--------------------------|------------------------------------|---------------------------|---------------------------|
+| **Sorting Algorithms**   | Bubble Sort                       | O(n²)                     | O(1)                     |
+|                          | Quick Sort                        | O(n log n) (avg), O(n²) (worst) | O(log n) (recursion) |
+|                          | Merge Sort                        | O(n log n)                | O(n)                     |
+|                          | Radix Sort                        | O(nk)                     | O(n + k)                 |
+| **Greedy Algorithms**    | Huffman Coding                    | O(n log n)                | O(n)                     |
+|                          | Kruskal's Algorithm               | O(E log V)                | O(E + V)                 |
+|                          | Prim's Algorithm                  | O(E log V)                | O(V²) (adjacency matrix) |
+| **Graph Algorithms**     | Dijkstra's Algorithm              | O(V log V + E)            | O(V + E)                 |
+|                          | Bellman-Ford Algorithm            | O(VE)                     | O(V)                     |
+|                          | Breadth-First Search (BFS)        | O(V + E)                  | O(V)                     |
+|                          | Depth-First Search (DFS)          | O(V + E)                  | O(V)                     |
+| **Divide and Conquer**   | Closest Pair of Points            | O(n log n)                | O(n)                     |
+|                          | Binary Search                     | O(log n)                  | O(1)                     |
+| **Dynamic Programming**  | Floyd-Warshall Algorithm          | O(V³)                     | O(V²)                    |
+|                          | Longest Common Subsequence        | O(mn)                     | O(mn)                    |
+|                          | 0/1 Knapsack                      | O(nW)                     | O(nW)                    |
+| **Backtracking**         | N-Queens Problem                  | O(n!)                     | O(n²)                    |
+|                          | Sudoku Solver                     | O(9^(n²))                 | O(n²)                    |
+
+---
 
 ## Getting Started
 
