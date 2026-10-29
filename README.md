@@ -3,6 +3,10 @@
 An interactive algorithms laboratory: 33 algorithms implemented in Rust, run
 natively through [Tauri](https://tauri.app), driven from a React interface.
 
+<p align="center">
+  <img src="public/pic.png" alt="Struggling with algorithms" width="700" />
+</p>
+
 ---
 
 ## What it does
