@@ -1,52 +1,462 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   Fonts
+
+   The previous paths were relative to this stylesheet (src/css/fonts/...),
+   which does not exist. The files live in public/fonts, served from the root.
+   --------------------------------------------------------------------------- */
 @font-face {
   font-family: "Roboto";
-  src: url("fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf") format("truetype");
-  font-weight: normal;
+  src: url("/fonts/Roboto/Roboto-VariableFont_wdth,wght.ttf") format("truetype");
+  font-weight: 100 900;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "Montserrat";
-  src: url("fonts/Montserrat/Montserrat-VariableFont_wght.ttf")
-    format("truetype");
-  font-weight: normal;
+  src: url("/fonts/Montserrat/Montserrat-VariableFont_wght.ttf") format("truetype");
+  font-weight: 100 900;
   font-style: normal;
+  font-display: swap;
+}
+
+/* ---------------------------------------------------------------------------
+   Design tokens
+
+   One greyscale ramp, two themes. Nothing here is a hue: the interface is
+   black, white and the greys between, so emphasis has to come from weight,
+   spacing and rule placement rather than colour. `data-theme` is set on
+   <html> by the inline script in index.html before first paint.
+   --------------------------------------------------------------------------- */
+:root {
+  --font-ui: "Roboto", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Montserrat", var(--font-ui);
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+
+  --step-0: 0.875rem;
+  --step-1: 1rem;
+  --step-2: 1.25rem;
+  --step-3: 1.75rem;
+  --step-4: 2.5rem;
+  --step-5: 3.75rem;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  --titlebar-h: 44px;
+
+  /* One radius scale. `sm` is for things the size of a word (tags, icon
+     buttons), the base for controls, `lg` for panels, and `window` for the
+     outer shell -- see the .app-shell rule. */
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --radius-window: 12px;
+
+  --dur: 120ms;
+}
+
+/* Dark is the default for this app. */
+:root,
+:root[data-theme="dark"] {
+  --bg: #0b0b0c;
+  --bg-subtle: #121214;
+  --bg-raised: #17171a;
+  --bg-inset: #08080a;
+
+  --fg: #f4f4f5;
+  --fg-muted: #a1a1a6;
+  --fg-faint: #6b6b70;
+
+  --border: #26262a;
+  --border-strong: #3a3a40;
+
+  --fg-invert: #0b0b0c;
+  --bg-invert: #f4f4f5;
+
+  --ok: #e8e8ea;
+  --bad: #ffffff;
+  --bad-bg: #2a1d1d;
+  --bad-border: #5c3a3a;
+
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.5);
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-subtle: #f7f7f8;
+  --bg-raised: #ffffff;
+  --bg-inset: #f2f2f3;
+
+  --fg: #111113;
+  --fg-muted: #5e5e63;
+  --fg-faint: #8e8e93;
+
+  --border: #e2e2e5;
+  --border-strong: #c7c7cc;
+
+  --fg-invert: #ffffff;
+  --bg-invert: #111113;
+
+  --ok: #111113;
+  --bad: #1a1a1c;
+  --bad-bg: #f7eaea;
+  --bad-border: #d9b8b8;
+
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.08);
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
 }
 
 body {
-  color: white;
-  background-color: black;
-  font-family: "Roboto", Courier, monospace;
-}
-.code-line {
-  transition: background-color 0.15s ease;
-}
-
-button {
-  transition: all 0.2s ease;
+  margin: 0;
+  background: transparent;
+  color: var(--fg);
+  font-family: var(--font-ui);
+  font-size: var(--step-0);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-/* width of the scrollbar */
+/* ---------------------------------------------------------------------------
+   Window shell
+
+   `decorations: false` plus `transparent: true` in tauri.conf.json means the
+   OS draws no frame at all, so the rounded corner has to be drawn here. The
+   shell clips its children, which is what rounds the titlebar's top corners
+   without the titlebar knowing about it.
+
+   A maximised window is flush with the screen edges, where a radius would
+   leave four transparent notches -- so the corners square off. `data-window`
+   is kept in sync by src/window-chrome.js.
+   --------------------------------------------------------------------------- */
+.app-shell {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-window);
+}
+
+:root[data-window="maximized"] .app-shell {
+  border-color: transparent;
+  border-radius: 0;
+}
+
+/* Tabular figures everywhere numbers are compared, so timings line up. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------------
+   Primitives
+   --------------------------------------------------------------------------- */
+
+.surface {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* Small uppercase section label: the main structural device in this design. */
+.label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font: inherit;
+  font-weight: 500;
+  color: var(--fg);
+  background: transparent;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background var(--dur) ease, color var(--dur) ease,
+    border-color var(--dur) ease;
+}
+
+.btn:hover:not(:disabled) {
+  background: var(--bg-subtle);
+  border-color: var(--fg-faint);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* The single emphasised action per view, inverted rather than coloured. */
+.btn-primary {
+  color: var(--fg-invert);
+  background: var(--bg-invert);
+  border-color: var(--bg-invert);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--fg-muted);
+  border-color: var(--fg-muted);
+  color: var(--fg-invert);
+}
+
+.btn-icon {
+  padding: var(--space-2);
+  border-color: transparent;
+}
+
+.input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  color: var(--fg);
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color var(--dur) ease;
+}
+
+.input::placeholder {
+  color: var(--fg-faint);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--fg-faint);
+}
+
+/* Visible focus for keyboard users on every interactive element. */
+:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 2px var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+/* ---------------------------------------------------------------------------
+   Navigation list (sidebar)
+   --------------------------------------------------------------------------- */
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  position: relative;
+  color: var(--fg-muted);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  font: inherit;
+  cursor: pointer;
+  transition: color var(--dur) ease, background var(--dur) ease;
+}
+
+.nav-item:hover {
+  color: var(--fg);
+  background: var(--bg-subtle);
+}
+
+.nav-item[aria-current="true"],
+.nav-item.is-active {
+  color: var(--fg);
+  background: var(--bg-subtle);
+  font-weight: 500;
+}
+
+.nav-item[aria-current="true"]::before,
+.nav-item.is-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 25%;
+  bottom: 25%;
+  width: 2px;
+  border-radius: 999px;
+  background: var(--fg);
+}
+
+.nav-item:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---------------------------------------------------------------------------
+   Titlebar
+   --------------------------------------------------------------------------- */
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--titlebar-h);
+  padding-left: var(--space-5);
+  padding-right: var(--space-2);
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  user-select: none;
+}
+
+.titlebar-btn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 28px;
+  color: var(--fg-muted);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--dur) ease, color var(--dur) ease;
+}
+
+.titlebar-btn:hover {
+  color: var(--fg);
+  background: var(--bg-subtle);
+}
+
+.titlebar-btn.close:hover {
+  color: #fff;
+  background: #c0392b;
+}
+
+/* ---------------------------------------------------------------------------
+   Scrollbars
+   --------------------------------------------------------------------------- */
+
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px; /* for horizontal scrollbar */
+  width: 10px;
+  height: 10px;
 }
 
-/* track (background) */
 ::-webkit-scrollbar-track {
-  background: #1e1e1e;
-  border-radius: 10px;
+  background: transparent;
 }
 
-/* draggable part (thumb) */
 ::-webkit-scrollbar-thumb {
-  background: #2c2c2c;
-  border-radius: 10px;
+  background: var(--border-strong);
+  border: 3px solid var(--bg);
+  border-radius: 999px;
 }
 
-/* thumb on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #888;
+  background: var(--fg-faint);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ---------------------------------------------------------------------------
+   Code editor
+
+   react-simple-code-editor stacks a transparent textarea over a highlighted
+   <pre>; both must share identical metrics or the caret drifts.
+   --------------------------------------------------------------------------- */
+
+.editor-shell {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  tab-size: 2;
+}
+
+.editor-shell textarea {
+  outline: none !important;
+}
+
+.editor-shell textarea::placeholder {
+  color: var(--fg-faint);
+}
+
+/* Greyscale JSON highlighting: structure reads through weight and opacity. */
+.token.property,
+.token.string-property {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.token.string {
+  color: var(--fg-muted);
+}
+
+.token.number,
+.token.boolean {
+  color: var(--fg);
+}
+
+.token.null,
+.token.keyword {
+  color: var(--fg-faint);
+  font-style: italic;
+}
+
+.token.punctuation,
+.token.operator {
+  color: var(--fg-faint);
+}
+
+.token.comment {
+  color: var(--fg-faint);
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------------------
+   Motion
+
+   Honour a reduced-motion preference rather than animating regardless.
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

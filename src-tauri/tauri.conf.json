@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "tauri-app",
+  "productName": "KlugNetz",
   "version": "0.1.0",
-  "identifier": "com.tauri-app.app",
+  "identifier": "com.klugnetz.app",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
@@ -10,12 +10,17 @@
     "frontendDist": "../dist"
   },
   "app": {
+    "macOSPrivateApi": true,
     "windows": [
       {
-        "title": "tauri-app",
+        "title": "KlugNetz",
         "decorations": false,
+        "transparent": true,
         "width": 1280,
-        "height": 720
+        "height": 720,
+        "minWidth": 900,
+        "minHeight": 600,
+        "resizable": true
       }
     ],
     "security": {
@@ -31,6 +36,9 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
-    ]
+    ],
+    "publisher": "Mehrnoosh Yaghoubi Kalourazi",
+    "copyright": "Copyright (c) 2026 Mehrnoosh Yaghoubi Kalourazi",
+    "shortDescription": "An interactive algorithms laboratory"
   }
 }

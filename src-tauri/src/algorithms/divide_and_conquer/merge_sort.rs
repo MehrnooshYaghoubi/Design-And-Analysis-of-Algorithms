@@ -1,4 +1,4 @@
-fn merge_sort<T: Ord + Clone>(arr: &mut [T]) {
+pub fn merge_sort<T: Ord + Clone>(arr: &mut [T]) {
     if arr.len() <= 1 {
         return; // Base case: already sorted
     }
@@ -13,7 +13,7 @@ fn merge_sort<T: Ord + Clone>(arr: &mut [T]) {
     merge(arr, &left, &right); // Merge the two halves
 }
 
-fn merge<T: Ord>(arr: &mut [T], left: &[T], right: &[T]) {
+fn merge<T: Ord + Clone>(arr: &mut [T], left: &[T], right: &[T]) {
     let mut i = 0; // Index for left
     let mut j = 0; // Index for right
     let mut k = 0; // Index for merged array

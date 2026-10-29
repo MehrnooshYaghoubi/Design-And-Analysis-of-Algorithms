@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Source for `npx tauri icon`, which rasterises every platform size from
+       this one file. An opaque tile rather than a bare glyph: a black mark on
+       transparency disappears against a dark dock or taskbar, so the tile
+       carries the contrast and the mark stays white on top of it.
+
+       The geometry is the 48-unit mark from src/components/Logomark.jsx,
+       scaled 8.5x and centred. The inset is set by the corner radius, not by
+       taste: at this scale the top-left node clears the 112px rounding arc by
+       14px, and any larger would start to crop. -->
+  <rect width="512" height="512" rx="112" fill="#111113"/>
+  <g transform="translate(52 52) scale(8.5)">
+    <g fill="none" stroke="#ffffff" stroke-linecap="round">
+      <path d="M13 10V38" stroke-width="8"/>
+      <path d="M13 24L35 10" stroke-width="6"/>
+      <path d="M13 24L35 38" stroke-width="6"/>
+    </g>
+    <g fill="#ffffff">
+      <circle cx="13" cy="10" r="4.5"/>
+      <circle cx="13" cy="24" r="4.5"/>
+      <circle cx="13" cy="38" r="4.5"/>
+      <circle cx="35" cy="10" r="4.5"/>
+      <circle cx="35" cy="38" r="4.5"/>
+    </g>
+  </g>
+</svg>

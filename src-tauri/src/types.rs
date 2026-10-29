@@ -1,10 +1,7 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
 use std::collections::HashMap;
 
 // Types And Structs
-
-pub type AlgoHandler = fn(Value) -> Result<String, String>;
 
 #[derive(Clone, Deserialize, Debug)]
 #[serde(rename_all = "lowercase")]
@@ -43,6 +40,10 @@ pub enum Algorithm {
 pub struct AlgorithmResult {
     pub name: String,
     pub duration_ns: u64,
+    /// Number of elements sorted, so the UI can label the run.
+    pub length: usize,
+    /// True when the run was stopped early.
+    pub cancelled: bool,
 }
 
 #[derive(Clone, Deserialize, Debug)]
@@ -103,12 +104,6 @@ pub struct HuffmanInput {
     pub frequencies: HashMap<char, usize>,
 }
 
-#[derive(Debug, Clone, serde::Deserialize)]
-pub struct BellmanFordInput {
-    pub graph: GraphInput,
-    pub start: usize,
-}
-
 #[derive(serde::Deserialize)]
 pub struct TraversalInput {
     pub graph: Vec<Vec<usize>>,
@@ -125,4 +120,114 @@ pub struct InputDijkstra {
 pub struct DijkstraEdge {
     pub node: usize,
     pub cost: usize,
+}
+
+// ---------------------------------------------------------------------------
+// Inputs for the backtracking, branch-and-bound and dynamic-programming sets.
+// ---------------------------------------------------------------------------
+
+/// An integer-weighted item, used by both knapsack implementations.
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+pub struct WeightedItem {
+    pub value: u64,
+    pub weight: u64,
+}
+
+/// A directed edge that may carry a negative weight. `Edge` cannot: its
+/// `weight` is a `usize`, which is exactly why Bellman-Ford could not parse
+/// its own documented example.
+#[derive(Debug, Clone, Copy, Deserialize, Serialize)]
+pub struct SignedEdge {
+    pub from: usize,
+    pub to: usize,
+    pub weight: i64,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct BellmanFordInput {
+    pub vertex_count: usize,
+    pub start: usize,
+    pub edges: Vec<SignedEdge>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct ClosestPairInput {
+    pub points: Vec<Point>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct NQueensInput {
+    pub n: usize,
+    /// How many boards to materialise. Counting is always exhaustive.
+    #[serde(default = "default_max_solutions")]
+    pub max_solutions: usize,
+}
+
+fn default_max_solutions() -> usize {
+    32
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct SudokuInput {
+    pub grid: Vec<Vec<u8>>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct SubsetSumInput {
+    pub numbers: Vec<i64>,
+    pub target: i64,
+    #[serde(default = "default_max_subsets")]
+    pub max_subsets: usize,
+}
+
+fn default_max_subsets() -> usize {
+    32
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct HamiltonianInput {
+    pub num_vertices: usize,
+    /// Undirected `[u, v]` pairs.
+    pub edges: Vec<[usize; 2]>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct TspInput {
+    /// Square cost matrix; `null` means "no road".
+    pub matrix: Vec<Vec<Option<f64>>>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Knapsack01Input {
+    pub capacity: u64,
+    pub items: Vec<WeightedItem>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct KnapsackBnbInput {
+    pub capacity: f64,
+    pub items: Vec<WeightedItem>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct LcsInput {
+    pub a: String,
+    pub b: String,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct LisInput {
+    pub numbers: Vec<i64>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct MatrixChainInput {
+    /// Matrix `i` has shape `dimensions[i] x dimensions[i + 1]`.
+    pub dimensions: Vec<usize>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct FloydWarshallInput {
+    /// Square weight matrix; `null` means "no edge".
+    pub matrix: Vec<Vec<Option<i64>>>,
 }

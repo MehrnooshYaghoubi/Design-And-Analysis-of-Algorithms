@@ -1,0 +1,17 @@
+# Build output
+dist/
+dist-ssr/
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor and OS cruft
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+*.swp

@@ -1,8 +1,8 @@
 [package]
 name = "tauri-app"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "KlugNetz - an interactive algorithms laboratory"
+authors = ["Mehrnoosh Yaghoubi Kalourazi"]
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -18,9 +18,31 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [] }
+# `macos-private-api` is what `app.macOSPrivateApi` in tauri.conf.json
+# requires; without it the build rejects the transparent window. It is a
+# no-op on Linux and Windows.
+tauri = { version = "2", features = ["macos-private-api"] }
 tauri-plugin-opener = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 rand = "0.9.1"
 tokio = "1.47.1"
+
+# Release builds: optimise hard. Link-time optimisation across a single
+# codegen unit measurably speeds up the sorting inner loops.
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+# `tauri dev` uses the dev profile. Leaving it at opt-level 0 makes every
+# benchmark on the Compare page report debug-build timings, which are
+# dominated by unoptimised bounds checks rather than the algorithm.
+[profile.dev]
+opt-level = 1
+
+# Dependencies are not what we are measuring; always build them optimised.
+[profile.dev.package."*"]
+opt-level = 3

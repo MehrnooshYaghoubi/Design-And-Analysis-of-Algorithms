@@ -1,58 +1,88 @@
-import { Minus, Square, X } from "lucide-react";
+import { memo, useCallback } from "react";
+import { Minus, Square, X, Moon, Sun } from "lucide-react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import "../css/titlebar.css";
+import { useAppStore } from "../store";
+import Logomark from "./Logomark";
 
-export default function Header() {
-  let appWindow;
-  try {
-    appWindow = getCurrentWindow();
-  } catch (error) {
-    console.error("Error getting current window:", error);
-  }
+/// Resolved once per call rather than at module scope, so a failure in a
+/// non-Tauri context (a plain browser tab) degrades to a no-op instead of
+/// throwing during render.
+function withWindow(action) {
+  return async () => {
+    try {
+      await action(getCurrentWindow());
+    } catch (error) {
+      console.error("Window action failed:", error);
+    }
+  };
+}
 
-  document
-    .getElementById("titlebar-minimize")
-    ?.addEventListener("click", () => appWindow.minimize());
-  document
-    .getElementById("titlebar-maximize")
-    ?.addEventListener("click", () => appWindow.toggleMaximize());
-  document
-    .getElementById("titlebar-close")
-    ?.addEventListener("click", () => appWindow.close());
+function Titlebar() {
+  const theme = useAppStore((s) => s.theme);
+  const toggleTheme = useAppStore((s) => s.toggleTheme);
+
+  const minimize = useCallback(withWindow((w) => w.minimize()), []);
+  const maximize = useCallback(withWindow((w) => w.toggleMaximize()), []);
+  // This is the bug behind "the cross button sometimes does not work": the
+  // old handler was `() => appWindow.close` -- it read the method and threw
+  // it away without calling it. The missing `core:window:allow-close`
+  // permission would have blocked it even once called.
+  const close = useCallback(withWindow((w) => w.close()), []);
+
+  const nextTheme = theme === "dark" ? "light" : "dark";
 
   return (
-    <header
-      data-tauri-drag-region
-      className="flex w-full justify-between py-3 pl-10 pr-4 border-b-1 border-gray-800 solid select-none drag-region items-center h-[50px] z-100"
-    >
-      <div className="flex">
-        <img
-          src="./Logomark.svg"
-          alt="logo"
-          className="mr-3 w-[20px] aspect-auto"
-        />
-        <h3>KlugNetz</h3>
+    <header className="titlebar" data-tauri-drag-region>
+      <div className="flex items-center gap-3" data-tauri-drag-region>
+        <Logomark size={16} className="opacity-80" />
+        <span
+          className="font-semibold tracking-tight"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          KlugNetz
+        </span>
+        <span className="label hidden sm:inline">Algorithms Laboratory</span>
       </div>
-      <div className="flex items-center justify-around">
+
+      <div className="flex items-center gap-1">
         <button
-          className="mr-4 hover:text-red-400 transition duration-300 ease-in-out cursor-pointer w-4 cursp"
-          onClick={() => appWindow.minimize()}
+          className="titlebar-btn"
+          onClick={toggleTheme}
+          title={`Switch to ${nextTheme} mode`}
+          aria-label={`Switch to ${nextTheme} mode`}
         >
-          <Minus size={16} />
+          {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
+        </button>
+
+        <div className="w-px h-4 mx-1" style={{ background: "var(--border)" }} />
+
+        <button
+          className="titlebar-btn"
+          onClick={minimize}
+          title="Minimise"
+          aria-label="Minimise"
+        >
+          <Minus size={14} />
         </button>
         <button
-          className="mr-4 hover:text-red-400 transition duration-300 ease-in-out cursor-pointer w-4"
-          onClick={() => appWindow.toggleMaximize()}
+          className="titlebar-btn"
+          onClick={maximize}
+          title="Maximise"
+          aria-label="Maximise"
         >
-          <Square size={15} />
+          <Square size={12} />
         </button>
-        <button onClick={() => appWindow.close}>
-          <X
-            size={16}
-            className=" hover:text-red-400 transition duration-300 ease-in-out cursor-pointer w-4"
-          />
+        <button
+          className="titlebar-btn close"
+          onClick={close}
+          title="Close"
+          aria-label="Close"
+        >
+          <X size={14} />
         </button>
       </div>
     </header>
   );
 }
+
+export default memo(Titlebar);

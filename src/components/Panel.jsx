@@ -1,66 +1,133 @@
-import { useAppStore } from "./../store";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { useAppStore } from "../store";
 
-export default function Panel({ click = null }) {
-  const [structure, setStructure] = useState({});
+/// Module-level cache. The sidebar is mounted by two separate pages, and the
+/// previous version re-fetched this file on every mount and every navigation.
+let structurePromise = null;
+
+function loadStructure() {
+  if (!structurePromise) {
+    structurePromise = fetch("/folder_structure.json")
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .catch((err) => {
+        // Clear the cache so a later mount can retry a transient failure.
+        structurePromise = null;
+        throw err;
+      });
+  }
+  return structurePromise;
+}
+
+export const algorithmNameOf = (file) =>
+  file.replace(/\.rs$/, "").replace(/_/g, " ");
+
+/**
+ * The algorithm tree.
+ *
+ * @param onSelect   called with the algorithm name; falls back to the store
+ * @param isEnabled  optional predicate to grey out algorithms a page cannot run
+ * @param selected   name(s) to mark active; defaults to the store's selection
+ */
+function Panel({ onSelect, isEnabled, selected }) {
+  const [structure, setStructure] = useState(null);
+  const [error, setError] = useState(null);
   const [openFolders, setOpenFolders] = useState({});
-  const selectedAlgorithm = useAppStore((state) => state.selectedAlgorithm);
-  const setSelectedAlgorithm = useAppStore(
-    (state) => state.setSelectedAlgorithm
-  );
+
+  const storeSelected = useAppStore((s) => s.selectedAlgorithm);
+  const setStoreSelected = useAppStore((s) => s.setSelectedAlgorithm);
 
   useEffect(() => {
-    fetch("/folder_structure.json")
-      .then((res) => res.json())
-      .then((data) => setStructure(data))
-      .catch((err) => console.error("Error loading JSON:", err));
+    let alive = true;
+    loadStructure()
+      .then((data) => alive && setStructure(data))
+      .catch((err) => alive && setError(err.message));
+    return () => {
+      alive = false;
+    };
   }, []);
 
-  const toggleFolder = (folder) => {
+  const toggleFolder = useCallback((folder) => {
     setOpenFolders((prev) => ({ ...prev, [folder]: !prev[folder] }));
-  };
+  }, []);
+
+  const activeNames = selected ?? storeSelected;
+  const isActive = (name) =>
+    Array.isArray(activeNames) ? activeNames.includes(name) : activeNames === name;
+
+  if (error) {
+    return (
+      <li className="px-3 py-2" style={{ color: "var(--fg-faint)" }}>
+        Could not load the algorithm list ({error}).
+      </li>
+    );
+  }
+
+  if (!structure) {
+    return (
+      <li className="px-3 py-2" style={{ color: "var(--fg-faint)" }}>
+        Loading…
+      </li>
+    );
+  }
 
   return (
     <>
-      {Object.entries(structure).map(([folder, files]) => (
-        <li key={folder}>
-          {/* Group on the clickable div only */}
-          <div
-            onClick={() => toggleFolder(folder)}
-            className="text-sm flex items-center p-2 text-gray-300 hover:text-violet-500 hover:bg-gray-700/50 rounded-lg transition-all duration-200 border-l-2 border-transparent hover:border-[oklch(91%_0.096_180.426)] cursor-pointer"
-          >
-            <span className="w-2 h-2 bg-violet-800 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-            <span className="flex-1 capitalize">
-              {folder.replace(/_/g, " ")}
-            </span>
-            <span>{openFolders[folder] ? "▾" : "▸"}</span>
-          </div>
+      {Object.entries(structure).map(([folder, files]) => {
+        const open = !!openFolders[folder];
+        return (
+          <li key={folder}>
+            <button
+              type="button"
+              className="nav-item"
+              onClick={() => toggleFolder(folder)}
+              aria-expanded={open}
+            >
+              {open ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+              <span className="flex-1 capitalize">
+                {folder.replace(/_/g, " ")}
+              </span>
+              <span className="num" style={{ color: "var(--fg-faint)" }}>
+                {files.length}
+              </span>
+            </button>
 
-          {openFolders[folder] &&
-            files.map((file) => {
-              const name = file.replace(".rs", "").replace(/_/g, " ");
-              const isSelected = name === selectedAlgorithm;
-              return (
-                <li key={file}>
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation(); // prevent folder toggle
-                      click ? click(name) : setSelectedAlgorithm(name);
-                    }}
-                    className={
-                      isSelected
-                        ? "group ml-6 flex items-center p-2 text-violet-500 bg-gray-700/50 rounded-lg transition-all duration-200 border-l-2 border-[oklch(91%_0.096_180.426)] cursor-pointer text-sm my-1"
-                        : "group ml-6 flex items-center p-2 text-gray-300 hover:text-violet-500 hover:bg-gray-700/50 rounded-lg transition-all duration-200 border-l-2 border-transparent hover:border-[oklch(91%_0.096_180.426)] cursor-pointer text-sm my-1"
-                    }
-                  >
-                    <span className=" w-2 h-2 bg-violet-800 rounded-full mr-3 opacity-0 group-hover:opacity-100 transition-opacity"></span>
-                    {name}
-                  </div>
-                </li>
-              );
-            })}
-        </li>
-      ))}
+            {/* A nested list, not <li> inside <li>, which was invalid markup. */}
+            {open && (
+              <ul className="mb-1">
+                {files.map((file) => {
+                  const name = algorithmNameOf(file);
+                  const enabled = isEnabled ? isEnabled(name) : true;
+                  return (
+                    <li key={`${folder}/${file}`}>
+                      <button
+                        type="button"
+                        disabled={!enabled}
+                        title={
+                          enabled
+                            ? name
+                            : `${name} cannot be benchmarked on this page`
+                        }
+                        className={`nav-item pl-9 ${isActive(name) ? "is-active" : ""}`}
+                        onClick={() =>
+                          onSelect ? onSelect(name) : setStoreSelected(name)
+                        }
+                      >
+                        <span className="truncate">{name}</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </li>
+        );
+      })}
     </>
   );
 }
+
+export default memo(Panel);

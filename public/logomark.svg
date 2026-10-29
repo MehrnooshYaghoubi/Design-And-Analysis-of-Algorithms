@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <!-- The KlugNetz mark: the letter K drawn as a node-link graph. The stem and
+       the two arms are the edges, the five beaded terminals are the nodes, and
+       the vertex of the K is the junction where all three meet.
+
+       Weights are the result of testing at size: with the nodes any larger the
+       letterform dissolves and the mark reads as a generic share glyph, and
+       with them any smaller it is a plain typographic K. See
+       src/components/Logomark.jsx for the in-app version, which paints in
+       currentColor instead of flipping with the system theme. -->
+  <style>
+    .mark { fill: #111113; stroke: #111113; }
+    @media (prefers-color-scheme: dark) {
+      .mark { fill: #f4f4f5; stroke: #f4f4f5; }
+    }
+  </style>
+  <g class="mark" stroke-linecap="round">
+    <path d="M13 10V38" stroke-width="8"/>
+    <path d="M13 24L35 10" stroke-width="6"/>
+    <path d="M13 24L35 38" stroke-width="6"/>
+  </g>
+  <g class="mark" stroke="none">
+    <circle cx="13" cy="10" r="4.5"/>
+    <circle cx="13" cy="24" r="4.5"/>
+    <circle cx="13" cy="38" r="4.5"/>
+    <circle cx="35" cy="10" r="4.5"/>
+    <circle cx="35" cy="38" r="4.5"/>
+  </g>
+</svg>
